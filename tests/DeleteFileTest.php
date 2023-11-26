@@ -8,7 +8,6 @@ use jdavidbakr\MailTracker\Model\SentEmail;
 class DeleteFileTest extends SetUpTest
 {
 
-    /** @test */
     public function it_deletes_file_after_model_is_deleted()
     {
         $disk = 'testing';
@@ -22,7 +21,6 @@ class DeleteFileTest extends SetUpTest
 
         Storage::fake($disk);
 
-        // create model and file
         $filePath = 'mail-tracker/random-hash.html';
         $sentEmail = SentEmail::query()->create([
             'hash' => 'random-hash',

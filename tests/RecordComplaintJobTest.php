@@ -11,15 +11,12 @@ use jdavidbakr\MailTracker\Events\ComplaintMessageEvent;
 
 class RecordComplaintJobTest extends SetUpTest
 {
-    /**
-     * @test
-     */
     public function it_marks_the_email_as_unsuccessful()
     {
         Event::fake();
         $track = MailTracker::sentEmailModel()->newQuery()->create([
-                'hash' => Str::random(32),
-            ]);
+            'hash' => Str::random(32),
+        ]);
         $message_id = Str::uuid();
         $track->message_id = $message_id;
         $track->save();
@@ -31,7 +28,7 @@ class RecordComplaintJobTest extends SetUpTest
                 'timestamp' => 12345,
                 'complainedRecipients' => (object)[
                     (object)[
-                       'emailAddress' => 'recipient@example.com'
+                        'emailAddress' => 'recipient@example.com'
                     ]
                 ],
             ]

@@ -11,15 +11,12 @@ use jdavidbakr\MailTracker\RecordBounceJob;
 
 class RecordBounceJobTest extends SetUpTest
 {
-    /**
-     * @test
-     */
     public function it_handles_permanent_bounce()
     {
         Event::fake();
         $track = MailTracker::sentEmailModel()->newQuery()->create([
-                'hash' => Str::random(32),
-            ]);
+            'hash' => Str::random(32),
+        ]);
         $message_id = Str::uuid();
         $track->message_id = $message_id;
         $track->save();
@@ -30,7 +27,7 @@ class RecordBounceJobTest extends SetUpTest
             'bounce' => (object)[
                 'bouncedRecipients' => (object)[
                     (object)[
-                       'emailAddress' => 'recipient@example.com'
+                        'emailAddress' => 'recipient@example.com'
                     ]
                 ],
                 'bounceType' => 'Permanent'
@@ -62,8 +59,8 @@ class RecordBounceJobTest extends SetUpTest
     {
         Event::fake();
         $track = MailTracker::sentEmailModel()->newQuery()->create([
-                'hash' => Str::random(32),
-            ]);
+            'hash' => Str::random(32),
+        ]);
         $message_id = Str::uuid();
         $track->message_id = $message_id;
         $track->save();
@@ -74,8 +71,8 @@ class RecordBounceJobTest extends SetUpTest
             'bounce' => (object)[
                 'bouncedRecipients' => (object)[
                     (object)[
-                       'emailAddress' => 'recipient@example.com',
-                       'diagnosticCode' => 'The Diagnostic Code',
+                        'emailAddress' => 'recipient@example.com',
+                        'diagnosticCode' => 'The Diagnostic Code',
                     ]
                 ],
                 'bounceType' => 'Transient',
@@ -111,8 +108,8 @@ class RecordBounceJobTest extends SetUpTest
     {
         Event::fake();
         $track = MailTracker::sentEmailModel()->newQuery()->create([
-                'hash' => Str::random(32),
-            ]);
+            'hash' => Str::random(32),
+        ]);
         $message_id = Str::uuid();
         $track->message_id = $message_id;
         $track->save();
@@ -123,7 +120,7 @@ class RecordBounceJobTest extends SetUpTest
             'bounce' => (object)[
                 'bouncedRecipients' => (object)[
                     (object)[
-                       'emailAddress' => 'recipient@example.com',
+                        'emailAddress' => 'recipient@example.com',
                     ]
                 ],
                 'bounceType' => 'Transient',

@@ -9,9 +9,6 @@ use jdavidbakr\MailTracker\MailTracker;
 
 class MigrateRecipientsTest extends SetUpTest
 {
-    /**
-     * @test
-     */
     public function it_converts_existing_recipient_values()
     {
         Schema::connection(MailTracker::sentEmailModel()->getConnectionName())->table('sent_emails', function (Blueprint $table) {

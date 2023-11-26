@@ -69,19 +69,17 @@ class MailTrackerTest extends SetUpTest
 
     public function testSendMessage()
     {
-        // Create an old email to purge
         Config::set('mail-tracker.expire-days', 1);
         Config::set('mail-tracker.inject-pixel', 1);
         Config::set('mail-tracker.track-links', 1);
 
         $old_email = MailTracker::sentEmailModel()->newQuery()->create([
-                'hash' => Str::random(32),
-            ]);
+            'hash' => Str::random(32),
+        ]);
         $old_url = MailTracker::sentEmailUrlClickedModel()->newQuery()->create([
-                'sent_email_id' => $old_email->id,
-                'hash' => Str::random(32),
-            ]);
-        // Go into the future to make sure that the old email gets removed
+            'sent_email_id' => $old_email->id,
+            'hash' => Str::random(32),
+        ]);
         \Carbon\Carbon::setTestNow(\Carbon\Carbon::now()->addWeek());
         $str = Mockery::mock(Str::class);
         app()->instance(Str::class, $str);
@@ -96,7 +94,7 @@ class MailTrackerTest extends SetUpTest
         $faker = Factory::create();
         $email = $faker->email;
         $subject = $faker->sentence;
-        $name = $faker->firstName . ' ' .$faker->lastName;
+        $name = $faker->firstName . ' ' . $faker->lastName;
         View::addLocation(__DIR__);
         try {
             Mail::send('email.test', [], function ($message) use ($email, $subject, $name) {
@@ -120,19 +118,19 @@ class MailTrackerTest extends SetUpTest
         Event::assertDispatched(EmailSentEvent::class);
 
         $this->assertDatabaseHas('sent_emails', [
-                'hash' => 'random-hash',
-                'recipient_name' => $name,
-                'recipient_email' => $email,
-                'sender_name' => 'From Name',
-                'sender_email' => 'from@johndoe.com',
-                'subject' => $subject,
-                'opened_at' => null,
-                'clicked_at' => null,
-            ]);
+            'hash' => 'random-hash',
+            'recipient_name' => $name,
+            'recipient_email' => $email,
+            'sender_name' => 'From Name',
+            'sender_email' => 'from@johndoe.com',
+            'subject' => $subject,
+            'opened_at' => null,
+            'clicked_at' => null,
+        ]);
         $sent_email = MailTracker::sentEmailModel()->newQuery()->where([
             'hash' => 'random-hash',
         ])->first();
-        $this->assertEquals($name.' <'.$email.'>', $sent_email->recipient);
+        $this->assertEquals($name . ' <' . $email . '>', $sent_email->recipient);
         $this->assertEquals('From Name <from@johndoe.com>', $sent_email->sender);
         $this->assertNull($old_email->fresh());
         $this->assertNull($old_url->fresh());
@@ -142,7 +140,7 @@ class MailTrackerTest extends SetUpTest
     {
         $faker = Factory::create();
         $email = $faker->email;
-        $name = $faker->firstName . ' ' .$faker->lastName;
+        $name = $faker->firstName . ' ' . $faker->lastName;
         $content = 'Text to e-mail';
         View::addLocation(__DIR__);
         $str = Mockery::mock(Str::class);
@@ -174,7 +172,7 @@ class MailTrackerTest extends SetUpTest
     {
         $faker = Factory::create();
         $email = $faker->email;
-        $name = $faker->firstName . ' ' .$faker->lastName;
+        $name = $faker->firstName . ' ' . $faker->lastName;
         View::addLocation(__DIR__);
         $str = Mockery::mock(Str::class);
         app()->instance(Str::class, $str);
@@ -187,7 +185,6 @@ class MailTrackerTest extends SetUpTest
         try {
             Mail::to($email)->send($mailable);
         } catch (Exception $e) {
-            // dd($e);
         }
 
         $this->assertDatabaseHas('sent_emails', [
@@ -200,7 +197,7 @@ class MailTrackerTest extends SetUpTest
     {
         $faker = Factory::create();
         $email = $faker->email;
-        $name = $faker->firstName . ' ' .$faker->lastName;
+        $name = $faker->firstName . ' ' . $faker->lastName;
         View::addLocation(__DIR__);
         $str = Mockery::mock(Str::class);
         app()->instance(Str::class, $str);
@@ -209,7 +206,7 @@ class MailTrackerTest extends SetUpTest
             ->andReturn('random-hash');
         $mailable = new TestMailable();
         $mailable->subject('this is  the message subject.');
-        $mailable->attach(__DIR__.'/email/test.blade.php');
+        $mailable->attach(__DIR__ . '/email/test.blade.php');
 
         try {
             Mail::to($email)->send($mailable);
@@ -227,7 +224,7 @@ class MailTrackerTest extends SetUpTest
     {
         $faker = Factory::create();
         $email = $faker->email;
-        $name = $faker->firstName . ' ' .$faker->lastName;
+        $name = $faker->firstName . ' ' . $faker->lastName;
         View::addLocation(__DIR__);
         $str = Mockery::mock(Str::class);
         app()->instance(Str::class, $str);
@@ -252,7 +249,6 @@ class MailTrackerTest extends SetUpTest
                 $message->priority(3);
             });
         } catch (TransportException $e) {
-
         }
 
         $this->assertDatabaseHas('sent_emails', [
@@ -274,7 +270,7 @@ class MailTrackerTest extends SetUpTest
 
         $mailable = new TestMailable();
         $mailable->subject('this is  the message subject.');
-        $mailable->attach(__DIR__.'/email/example.pdf', [
+        $mailable->attach(__DIR__ . '/email/example.pdf', [
             'as' => 'invoice.pdf',
             'mime' => 'application/pdf',
         ]);
@@ -299,7 +295,7 @@ class MailTrackerTest extends SetUpTest
         $faker = Factory::create();
         $email = $faker->email;
         $subject = $faker->sentence;
-        $name = $faker->firstName . ' ' .$faker->lastName;
+        $name = $faker->firstName . ' ' . $faker->lastName;
         View::addLocation(__DIR__);
         try {
             Mail::send('email.test', [], function ($message) use ($email, $subject, $name) {
@@ -323,13 +319,13 @@ class MailTrackerTest extends SetUpTest
         }
 
         $this->assertDatabaseMissing('sent_emails', [
-                'recipient' => $name.' <'.$email.'>',
-                'subject' => $subject,
-                'sender_name' => 'From Name',
-                'sender_email' => 'from@johndoe.com',
-                'recipient_name' => $name,
-                'recipient_email' => $email,
-            ]);
+            'recipient' => $name . ' <' . $email . '>',
+            'subject' => $subject,
+            'sender_name' => 'From Name',
+            'sender_email' => 'from@johndoe.com',
+            'recipient_name' => $name,
+            'recipient_email' => $email,
+        ]);
     }
 
     /**
@@ -341,8 +337,8 @@ class MailTrackerTest extends SetUpTest
         Config::set('mail-tracker.tracker-queue', 'alt-queue');
         Bus::fake();
         $track = MailTracker::sentEmailModel()->newQuery()->create([
-                'hash' => Str::random(32),
-            ]);
+            'hash' => Str::random(32),
+        ]);
         $pings = $track->opens;
         $pings++;
         $url = route('mailTracker_t', [$track->hash]);
@@ -370,9 +366,9 @@ class MailTrackerTest extends SetUpTest
         Config::set('mail-tracker.tracker-queue', 'alt-queue');
         Bus::fake();
         $track = MailTracker::sentEmailModel()->newQuery()->create([
-                'hash' => Str::random(32),
-                'opened_at' => now()->subDays(10),
-            ]);
+            'hash' => Str::random(32),
+            'opened_at' => now()->subDays(10),
+        ]);
         $pings = $track->opens;
         $pings++;
         $url = route('mailTracker_t', [$track->hash]);
@@ -397,15 +393,15 @@ class MailTrackerTest extends SetUpTest
         Config::set('mail-tracker.tracker-queue', 'alt-queue');
         Bus::fake();
         $track = MailTracker::sentEmailModel()->newQuery()->create([
-                'hash' => Str::random(32),
-            ]);
+            'hash' => Str::random(32),
+        ]);
         $clicks = $track->clicks;
         $clicks++;
-        $redirect = 'http://'.Str::random(15).'.com/'.Str::random(10).'/'.Str::random(10).'/'.rand(0, 100).'/'.rand(0, 100).'?page='.rand(0, 100).'&x='.Str::random(32);
+        $redirect = 'http://' . Str::random(15) . '.com/' . Str::random(10) . '/' . Str::random(10) . '/' . rand(0, 100) . '/' . rand(0, 100) . '?page=' . rand(0, 100) . '&x=' . Str::random(32);
         $url = route('mailTracker_l', [
-                MailTracker::hash_url($redirect), // Replace slash with dollar sign
-                $track->hash
-            ]);
+            MailTracker::hash_url($redirect), // Replace slash with dollar sign
+            $track->hash
+        ]);
         $response = $this->get($url);
 
         $response->assertRedirect($redirect);
@@ -428,13 +424,13 @@ class MailTrackerTest extends SetUpTest
         Config::set('mail-tracker.tracker-queue', 'alt-queue');
         Bus::fake();
         $track = MailTracker::sentEmailModel()->newQuery()->create([
-                'hash' => Str::random(32),
-            ]);
-        $redirect = 'http://'.Str::random(15).'.com/'.Str::random(10).'/'.Str::random(10).'/'.rand(0, 100).'/'.rand(0, 100).'?page='.rand(0, 100).'&x='.Str::random(32);
+            'hash' => Str::random(32),
+        ]);
+        $redirect = 'http://' . Str::random(15) . '.com/' . Str::random(10) . '/' . Str::random(10) . '/' . rand(0, 100) . '/' . rand(0, 100) . '?page=' . rand(0, 100) . '&x=' . Str::random(32);
         $url = route('mailTracker_n', [
-                'l' => $redirect,
-                'h' => $track->hash
-            ]);
+            'l' => $redirect,
+            'h' => $track->hash
+        ]);
 
         $response = $this->get($url);
 
@@ -458,19 +454,19 @@ class MailTrackerTest extends SetUpTest
     public function it_redirects_even_if_no_sent_email_exists()
     {
         $track = MailTracker::sentEmailModel()->newQuery()->create([
-                'hash' => Str::random(32),
-            ]);
+            'hash' => Str::random(32),
+        ]);
 
         $clicks = $track->clicks;
         $clicks++;
 
-        $redirect = 'http://'.Str::random(15).'.com/'.Str::random(10).'/'.Str::random(10).'/'.rand(0, 100).'/'.rand(0, 100).'?page='.rand(0, 100).'&x='.Str::random(32);
+        $redirect = 'http://' . Str::random(15) . '.com/' . Str::random(10) . '/' . Str::random(10) . '/' . rand(0, 100) . '/' . rand(0, 100) . '?page=' . rand(0, 100) . '&x=' . Str::random(32);
 
         // Do it with an invalid hash
         $url = route('mailTracker_n', [
-                'l' => $redirect,
-                'h' => 'bad-hash'
-            ]);
+            'l' => $redirect,
+            'h' => 'bad-hash'
+        ]);
         $response = $this->get($url);
 
         $response->assertRedirect($redirect);
@@ -521,43 +517,43 @@ class MailTrackerTest extends SetUpTest
     public function it_retrieves_the_mesage_id_from_laravel_mailer()
     {
         $sent = MailTracker::sentEmailModel()->newQuery()->create([
-            'hash'=>'the-hash',
-            'message_id'=>'to-be-replaced',
+            'hash' => 'the-hash',
+            'message_id' => 'to-be-replaced',
         ]);
         $headers = new Headers;
         $headers->addHeader('X-Mailer-Hash', $sent->hash);
         $sendingEvent = Mockery::mock(MessageSending::class);
         $sendingEvent->message = Mockery::mock(Email::class, [
-                'getTo' => [
-                    Mockery::mock([
-                        'getAddress'=>'destination@example.com',
-                        'getName'=>'Destination Person'
-                    ])
-                ],
-                'getFrom' => [
-                    Mockery::mock([
-                        'getAddress'=>'from@example.com',
-                        'getName'=>'From Name'
-                    ])
-                ],
-                'getHeaders' => $headers,
-                'getSubject' => 'The message subject',
-                'getBody' => Mockery::mock(AbstractPart::class, [
-                    'getBody'=>'The body',
-                    'getMediaType'=>'text',
-                    'getMediaSubtype'=>'html',
-                ]),
-                'setBody' => Mockery::Mock(Email::class),
-                'getChildren' => [],
-                'getId' => 'message-id',
-                'getHtmlCharset' => 'utf-8',
-            ]);
+            'getTo' => [
+                Mockery::mock([
+                    'getAddress' => 'destination@example.com',
+                    'getName' => 'Destination Person'
+                ])
+            ],
+            'getFrom' => [
+                Mockery::mock([
+                    'getAddress' => 'from@example.com',
+                    'getName' => 'From Name'
+                ])
+            ],
+            'getHeaders' => $headers,
+            'getSubject' => 'The message subject',
+            'getBody' => Mockery::mock(AbstractPart::class, [
+                'getBody' => 'The body',
+                'getMediaType' => 'text',
+                'getMediaSubtype' => 'html',
+            ]),
+            'setBody' => Mockery::Mock(Email::class),
+            'getChildren' => [],
+            'getId' => 'message-id',
+            'getHtmlCharset' => 'utf-8',
+        ]);
         $sentEvent = Mockery::mock(MessageSent::class);
         $sentEvent->sent = Mockery::mock(SentMessage::class, [
-            'getOriginalMessage'=>Mockery::mock([
-                'getHeaders'=>$headers
+            'getOriginalMessage' => Mockery::mock([
+                'getHeaders' => $headers
             ]),
-            'getMessageId'=>'native-id',
+            'getMessageId' => 'native-id',
         ]);
         $tracker = new MailTracker();
 
@@ -565,8 +561,8 @@ class MailTrackerTest extends SetUpTest
         $tracker->messageSent($sentEvent);
 
         $this->assertDatabaseHas('sent_emails', [
-            'id'=>$sent->id,
-            'message_id'=>'native-id'
+            'id' => $sent->id,
+            'message_id' => 'native-id'
         ]);
     }
 
@@ -578,42 +574,42 @@ class MailTrackerTest extends SetUpTest
         Config::set('mail.default', 'ses');
         Config::set('mail.driver', null);
         $sent = MailTracker::sentEmailModel()->newQuery()->create([
-            'hash'=>'the-hash',
-            'message_id'=>'to-be-replaced',
+            'hash' => 'the-hash',
+            'message_id' => 'to-be-replaced',
         ]);
         $headers = new Headers;
         $headers->addHeader('X-Mailer-Hash', $sent->hash);
         $headers->addHeader('X-SES-Message-ID', 'aws-mailer-hash');
         $sendingEvent = Mockery::mock(MessageSending::class);
         $sendingEvent->message = Mockery::mock(Email::class, [
-                'getTo' => [
-                    Mockery::mock([
-                        'getAddress'=>'destination@example.com',
-                        'getName'=>'Destination Person'
-                    ])
-                ],
-                'getFrom' => [
-                    Mockery::mock([
-                        'getAddress'=>'from@example.com',
-                        'getName'=>'From Name'
-                    ])
-                ],
-                'getHeaders' => $headers,
-                'getSubject' => 'The message subject',
-                'getBody' => Mockery::mock(AbstractPart::class, 'content', [
-                    'getBody'=>'The body',
-                    'getMediaType'=>'text',
-                    'getMediaSubtype'=>'html',
-                ]),
-                'setBody' => Mockery::mock(Email::class),
-                'getChildren' => [],
-                'getId' => 'message-id',
-                'getHtmlCharset' => 'utf-8',
-            ]);
+            'getTo' => [
+                Mockery::mock([
+                    'getAddress' => 'destination@example.com',
+                    'getName' => 'Destination Person'
+                ])
+            ],
+            'getFrom' => [
+                Mockery::mock([
+                    'getAddress' => 'from@example.com',
+                    'getName' => 'From Name'
+                ])
+            ],
+            'getHeaders' => $headers,
+            'getSubject' => 'The message subject',
+            'getBody' => Mockery::mock(AbstractPart::class, 'content', [
+                'getBody' => 'The body',
+                'getMediaType' => 'text',
+                'getMediaSubtype' => 'html',
+            ]),
+            'setBody' => Mockery::mock(Email::class),
+            'getChildren' => [],
+            'getId' => 'message-id',
+            'getHtmlCharset' => 'utf-8',
+        ]);
         $sentEvent = Mockery::mock(MessageSent::class);
         $sentEvent->sent = Mockery::mock(SentMessage::class, [
-            'getOriginalMessage'=>Mockery::mock([
-                'getHeaders'=>$headers
+            'getOriginalMessage' => Mockery::mock([
+                'getHeaders' => $headers
             ]),
         ]);
         $tracker = new MailTracker();
@@ -622,8 +618,8 @@ class MailTrackerTest extends SetUpTest
         $tracker->messageSent($sentEvent);
 
         $this->assertDatabaseHas('sent_emails', [
-            'id'=>$sent->id,
-            'message_id'=>'aws-mailer-hash'
+            'id' => $sent->id,
+            'message_id' => 'aws-mailer-hash'
         ]);
     }
 
@@ -640,42 +636,42 @@ class MailTrackerTest extends SetUpTest
         Config::set('mail.driver', 'ses');
         Config::set('mail.default', null);
         $sent = MailTracker::sentEmailModel()->newQuery()->create([
-            'hash'=>'the-hash',
-            'message_id'=>'to-be-replaced',
+            'hash' => 'the-hash',
+            'message_id' => 'to-be-replaced',
         ]);
         $headers = new Headers;
         $headers->addHeader('X-Mailer-Hash', $sent->hash);
         $headers->addHeader('X-SES-Message-ID', 'aws-mailer-hash');
         $sendingEvent = Mockery::mock(MessageSending::class);
         $sendingEvent->message = Mockery::mock(Email::class, [
-                'getTo' => [
-                    Mockery::mock([
-                        'getAddress'=>'destination@example.com',
-                        'getName'=>'Destination Person'
-                    ])
-                ],
-                'getFrom' => [
-                    Mockery::mock([
-                        'getAddress'=>'from@example.com',
-                        'getName'=>'From Name'
-                    ])
-                ],
-                'getHeaders' => $headers,
-                'getSubject' => 'The message subject',
-                'getBody' => Mockery::mock(AbstractPart::class, 'content', [
-                    'getBody'=>'The body',
-                    'getMediaType'=>'text',
-                    'getMediaSubtype'=>'html',
-                ]),
-                'setBody' => Mockery::mock(Email::class),
-                'getChildren' => [],
-                'getId' => 'message-id',
-                'getHtmlCharset' => 'utf-8',
-            ]);
+            'getTo' => [
+                Mockery::mock([
+                    'getAddress' => 'destination@example.com',
+                    'getName' => 'Destination Person'
+                ])
+            ],
+            'getFrom' => [
+                Mockery::mock([
+                    'getAddress' => 'from@example.com',
+                    'getName' => 'From Name'
+                ])
+            ],
+            'getHeaders' => $headers,
+            'getSubject' => 'The message subject',
+            'getBody' => Mockery::mock(AbstractPart::class, 'content', [
+                'getBody' => 'The body',
+                'getMediaType' => 'text',
+                'getMediaSubtype' => 'html',
+            ]),
+            'setBody' => Mockery::mock(Email::class),
+            'getChildren' => [],
+            'getId' => 'message-id',
+            'getHtmlCharset' => 'utf-8',
+        ]);
         $sentEvent = Mockery::mock(MessageSent::class);
         $sentEvent->sent = Mockery::mock(SentMessage::class, [
-            'getOriginalMessage'=>Mockery::mock([
-                'getHeaders'=>$headers
+            'getOriginalMessage' => Mockery::mock([
+                'getHeaders' => $headers
             ]),
         ]);
         $tracker = new MailTracker();
@@ -684,8 +680,8 @@ class MailTrackerTest extends SetUpTest
         $tracker->messageSent($sentEvent);
 
         $this->assertDatabaseHas('sent_emails', [
-            'id'=>$sent->id,
-            'message_id'=>'aws-mailer-hash'
+            'id' => $sent->id,
+            'message_id' => 'aws-mailer-hash'
         ]);
     }
 
@@ -700,21 +696,21 @@ class MailTrackerTest extends SetUpTest
     {
         $url = action('\jdavidbakr\MailTracker\SNSController@callback');
         $response = $this->post($url, [
-                'message' => json_encode([
-                        // Required
-                        'Message' => 'test subscription message',
-                        'MessageId' => Str::random(10),
-                        'Timestamp' => \Carbon\Carbon::now()->timestamp,
-                        'TopicArn' => Str::random(10),
-                        'Type' => 'SubscriptionConfirmation',
-                        'Signature' => Str::random(32),
-                        'SigningCertURL' => Str::random(32),
-                        'SignatureVersion' => 1,
-                        // Request-specific
-                        'SubscribeURL' => 'http://google.com',
-                        'Token' => Str::random(10),
-                    ])
-            ]);
+            'message' => json_encode([
+                // Required
+                'Message' => 'test subscription message',
+                'MessageId' => Str::random(10),
+                'Timestamp' => \Carbon\Carbon::now()->timestamp,
+                'TopicArn' => Str::random(10),
+                'Type' => 'SubscriptionConfirmation',
+                'Signature' => Str::random(32),
+                'SigningCertURL' => Str::random(32),
+                'SignatureVersion' => 1,
+                // Request-specific
+                'SubscribeURL' => 'http://google.com',
+                'Token' => Str::random(10),
+            ])
+        ]);
         $response->assertSee('subscription confirmed');
     }
 
@@ -727,21 +723,21 @@ class MailTrackerTest extends SetUpTest
         Config::set('mail-tracker.sns-topic', $topic);
         $url = action('\jdavidbakr\MailTracker\SNSController@callback');
         $response = $this->post($url, [
-                'message' => json_encode([
-                        // Required
-                        'Message' => 'test subscription message',
-                        'MessageId' => Str::random(10),
-                        'Timestamp' => \Carbon\Carbon::now()->timestamp,
-                        'TopicArn' => $topic,
-                        'Type' => 'SubscriptionConfirmation',
-                        'Signature' => Str::random(32),
-                        'SigningCertURL' => Str::random(32),
-                        'SignatureVersion' => 1,
-                        // Request-specific
-                        'SubscribeURL' => 'http://google.com',
-                        'Token' => Str::random(10),
-                    ])
-            ]);
+            'message' => json_encode([
+                // Required
+                'Message' => 'test subscription message',
+                'MessageId' => Str::random(10),
+                'Timestamp' => \Carbon\Carbon::now()->timestamp,
+                'TopicArn' => $topic,
+                'Type' => 'SubscriptionConfirmation',
+                'Signature' => Str::random(32),
+                'SigningCertURL' => Str::random(32),
+                'SignatureVersion' => 1,
+                // Request-specific
+                'SubscribeURL' => 'http://google.com',
+                'Token' => Str::random(10),
+            ])
+        ]);
         $response->assertSee('subscription confirmed');
     }
 
@@ -754,21 +750,21 @@ class MailTrackerTest extends SetUpTest
         Config::set('mail-tracker.sns-topic', $topic);
         $url = action('\jdavidbakr\MailTracker\SNSController@callback');
         $response = $this->post($url, [
-                'message' => json_encode([
-                        // Required
-                        'Message' => 'test subscription message',
-                        'MessageId' => Str::random(10),
-                        'Timestamp' => \Carbon\Carbon::now()->timestamp,
-                        'TopicArn' => Str::random(32),
-                        'Type' => 'SubscriptionConfirmation',
-                        'Signature' => Str::random(32),
-                        'SigningCertURL' => Str::random(32),
-                        'SignatureVersion' => 1,
-                        // Request-specific
-                        'SubscribeURL' => 'http://google.com',
-                        'Token' => Str::random(10),
-                    ])
-            ]);
+            'message' => json_encode([
+                // Required
+                'Message' => 'test subscription message',
+                'MessageId' => Str::random(10),
+                'Timestamp' => \Carbon\Carbon::now()->timestamp,
+                'TopicArn' => Str::random(32),
+                'Type' => 'SubscriptionConfirmation',
+                'Signature' => Str::random(32),
+                'SigningCertURL' => Str::random(32),
+                'SignatureVersion' => 1,
+                // Request-specific
+                'SubscribeURL' => 'http://google.com',
+                'Token' => Str::random(10),
+            ])
+        ]);
         $response->assertSee('invalid topic ARN');
     }
 
@@ -784,17 +780,17 @@ class MailTrackerTest extends SetUpTest
         ];
 
         $response = $this->post(action('\jdavidbakr\MailTracker\SNSController@callback'), [
-                'message' => json_encode([
-                    'Message' => json_encode($message),
-                    'MessageId' => Str::uuid(),
-                    'Timestamp' => Carbon::now()->timestamp,
-                    'TopicArn' => Str::uuid(),
-                    'Type' => 'Notification',
-                    'Signature' => Str::uuid(),
-                    'SigningCertURL' => Str::uuid(),
-                    'SignatureVersion' => Str::uuid(),
-                ])
-            ]);
+            'message' => json_encode([
+                'Message' => json_encode($message),
+                'MessageId' => Str::uuid(),
+                'Timestamp' => Carbon::now()->timestamp,
+                'TopicArn' => Str::uuid(),
+                'Type' => 'Notification',
+                'Signature' => Str::uuid(),
+                'SigningCertURL' => Str::uuid(),
+                'SignatureVersion' => Str::uuid(),
+            ])
+        ]);
 
         $response->assertSee('notification processed');
         Bus::assertDispatched(RecordDeliveryJob::class, function ($job) use ($message) {
@@ -815,17 +811,17 @@ class MailTrackerTest extends SetUpTest
         ];
 
         $response = $this->post(action('\jdavidbakr\MailTracker\SNSController@callback'), [
-                'message' => json_encode([
-                    'Message' => json_encode($message),
-                    'MessageId' => Str::uuid(),
-                    'Timestamp' => Carbon::now()->timestamp,
-                    'TopicArn' => Str::uuid(),
-                    'Type' => 'Notification',
-                    'Signature' => Str::uuid(),
-                    'SigningCertURL' => Str::uuid(),
-                    'SignatureVersion' => Str::uuid(),
-                ])
-            ]);
+            'message' => json_encode([
+                'Message' => json_encode($message),
+                'MessageId' => Str::uuid(),
+                'Timestamp' => Carbon::now()->timestamp,
+                'TopicArn' => Str::uuid(),
+                'Type' => 'Notification',
+                'Signature' => Str::uuid(),
+                'SigningCertURL' => Str::uuid(),
+                'SignatureVersion' => Str::uuid(),
+            ])
+        ]);
 
         $response->assertSee('notification processed');
         Bus::assertDispatched(RecordBounceJob::class, function ($job) use ($message) {
@@ -846,17 +842,17 @@ class MailTrackerTest extends SetUpTest
         ];
 
         $response = $this->post(action('\jdavidbakr\MailTracker\SNSController@callback'), [
-                'message' => json_encode([
-                    'Message' => json_encode($message),
-                    'MessageId' => Str::uuid(),
-                    'Timestamp' => Carbon::now()->timestamp,
-                    'TopicArn' => Str::uuid(),
-                    'Type' => 'Notification',
-                    'Signature' => Str::uuid(),
-                    'SigningCertURL' => Str::uuid(),
-                    'SignatureVersion' => Str::uuid(),
-                ])
-            ]);
+            'message' => json_encode([
+                'Message' => json_encode($message),
+                'MessageId' => Str::uuid(),
+                'Timestamp' => Carbon::now()->timestamp,
+                'TopicArn' => Str::uuid(),
+                'Type' => 'Notification',
+                'Signature' => Str::uuid(),
+                'SigningCertURL' => Str::uuid(),
+                'SignatureVersion' => Str::uuid(),
+            ])
+        ]);
 
         $response->assertSee('notification processed');
         Bus::assertDispatched(RecordComplaintJob::class, function ($job) use ($message) {
@@ -879,7 +875,7 @@ class MailTrackerTest extends SetUpTest
         $faker = Factory::create();
         $email = $faker->email;
         $subject = $faker->sentence;
-        $name = $faker->firstName . ' ' .$faker->lastName;
+        $name = $faker->firstName . ' ' . $faker->lastName;
         View::addLocation(__DIR__);
 
         Mail::send('email.testAmpersand', [], function ($message) use ($email, $subject, $name) {
@@ -995,7 +991,7 @@ class MailTrackerTest extends SetUpTest
         $faker = Factory::create();
         $email = $faker->email;
         $subject = $faker->sentence;
-        $name = $faker->firstName . ' ' .$faker->lastName;
+        $name = $faker->firstName . ' ' . $faker->lastName;
         $header_test = Str::random(10);
         \View::addLocation(__DIR__);
         try {
@@ -1031,8 +1027,8 @@ class MailTrackerTest extends SetUpTest
         $faker = Factory::create();
         $email = $faker->email;
         $subject = $faker->sentence;
-        $name = $faker->firstName . ' ' .$faker->lastName;
-        $header_test = Str::random(100) .', ' . Str::random(100) .', '. Str::random(100);
+        $name = $faker->firstName . ' ' . $faker->lastName;
+        $header_test = Str::random(100) . ', ' . Str::random(100) . ', ' . Str::random(100);
         View::addLocation(__DIR__);
         try {
             Mail::send('email.test', [], function ($message) use ($email, $subject, $name, $header_test) {
@@ -1059,15 +1055,12 @@ class MailTrackerTest extends SetUpTest
         $this->assertEquals($header_test, $track->getHeader('X-Header-Test'));
     }
 
-    /**
-     * @test
-     */
     public function it_retrieves_multiple_cc_recipients_from_header_data()
     {
         $faker = Factory::create();
         $email = $faker->email;
         $subject = $faker->sentence;
-        $name = $faker->firstName . ' ' .$faker->lastName;
+        $name = $faker->firstName . ' ' . $faker->lastName;
         View::addLocation(__DIR__);
         try {
             Mail::send('email.test', [], function ($message) use ($email, $subject, $name) {
@@ -1100,14 +1093,14 @@ class MailTrackerTest extends SetUpTest
 
         $this->assertEquals(
             'CC This Person With a Long Name 1 <cc.averylongemail1@johndoe.com>, ' .
-            'CC This Person With a Long Name 2 <cc.averylongemail2@johndoe.com>, ' .
-            'CC This Person With a Long Name 3 <cc.averylongemail3@johndoe.com>, ' .
-            'CC This Person With a Long Name 4 <cc.averylongemail4@johndoe.com>, ' .
-            'CC This Person With a Long Name 5 <cc.averylongemail5@johndoe.com>, ' .
-            'CC This Person With a Long Name 6 <cc.averylongemail6@johndoe.com>, ' .
-            'CC This Person With a Long Name 7 <cc.averylongemail7@johndoe.com>, ' .
-            'CC This Person With a Long Name 8 <cc.averylongemail8@johndoe.com>, ' .
-            'CC This Person With a Long Name 9 <cc.averylongemail9@johndoe.com>',
+                'CC This Person With a Long Name 2 <cc.averylongemail2@johndoe.com>, ' .
+                'CC This Person With a Long Name 3 <cc.averylongemail3@johndoe.com>, ' .
+                'CC This Person With a Long Name 4 <cc.averylongemail4@johndoe.com>, ' .
+                'CC This Person With a Long Name 5 <cc.averylongemail5@johndoe.com>, ' .
+                'CC This Person With a Long Name 6 <cc.averylongemail6@johndoe.com>, ' .
+                'CC This Person With a Long Name 7 <cc.averylongemail7@johndoe.com>, ' .
+                'CC This Person With a Long Name 8 <cc.averylongemail8@johndoe.com>, ' .
+                'CC This Person With a Long Name 9 <cc.averylongemail9@johndoe.com>',
             $track->getHeader('Cc')
         );
     }
@@ -1131,7 +1124,6 @@ class MailTrackerTest extends SetUpTest
             'sent_email_id' => $old_email->id,
             'hash' => Str::random(32),
         ]);
-        // Go into the future to make sure that the old email gets removed
         \Carbon\Carbon::setTestNow(\Carbon\Carbon::now()->addWeek());
 
         Event::fake([
@@ -1141,7 +1133,7 @@ class MailTrackerTest extends SetUpTest
         $faker = Factory::create();
         $email = $faker->email;
         $subject = $faker->sentence;
-        $name = $faker->firstName . ' ' .$faker->lastName;
+        $name = $faker->firstName . ' ' . $faker->lastName;
         \View::addLocation(__DIR__);
         try {
             \Mail::send('email.test', [], function ($message) use ($email, $subject, $name) {
@@ -1207,7 +1199,7 @@ class MailTrackerTest extends SetUpTest
         $headerData = '{"some_id":2,"some_othger_id":"0dd75231-31bb-4e67-8ab7-a83315f75a44","some_field":"A Field Value"}';
         $track = MailTracker::sentEmailModel()->newQuery()->create([
             'hash' => Str::random(32),
-            'headers' => 'X-MyHeader: '.$headerData,
+            'headers' => 'X-MyHeader: ' . $headerData,
         ]);
 
         $retrieval = $track->getHeader('X-MyHeader');
@@ -1219,7 +1211,7 @@ class MailTrackerTest extends SetUpTest
     {
         $faker = Factory::create();
         $email = $faker->email;
-        $name = $faker->firstName . ' ' .$faker->lastName;
+        $name = $faker->firstName . ' ' . $faker->lastName;
         $content = 'Text to e-mail';
         View::addLocation(__DIR__);
         $str = Mockery::mock(Str::class);
@@ -1233,7 +1225,7 @@ class MailTrackerTest extends SetUpTest
         config()->set('mail-tracker.tracker-filesystem', 'filesystem');
         config()->set('mail-tracker.tracker-filesystem-folder', 'mail-tracker');
         config()->set('filesystems.disks.testing.driver', 'local');
-        config()->set('filesystems.disks.testing.root', realpath(__DIR__.'/../storage'));
+        config()->set('filesystems.disks.testing.root', realpath(__DIR__ . '/../storage'));
         config()->set('filesystems.default', 'testing');
 
         Storage::fake(config('mail-tracker.tracker-filesystem'));
@@ -1256,7 +1248,7 @@ class MailTrackerTest extends SetUpTest
             'content' => null
         ]);
 
-        $tracker = MailTracker::sentEmailModel()->newQuery()->where('hash', '=','random-hash')->first();
+        $tracker = MailTracker::sentEmailModel()->newQuery()->where('hash', '=', 'random-hash')->first();
         $this->assertNotNull($tracker);
         $this->assertEquals($content, $tracker->content);
         $folder = config('mail-tracker.tracker-filesystem-folder', 'mail-tracker');
