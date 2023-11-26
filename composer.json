@@ -1,54 +1,18 @@
 {
     "name": "ideacatlab/laravel-mail-tracker",
-    "type": "library",
     "description": "Personalized version of the original library.",
-    "keywords": [
-        "mail-tracker"
-    ],
-    "minimum-stability": "dev",
-    "homepage": "https://github.com/rommeA/MailTracker",
+    "type": "library",
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Razvan Gheorghe",
-            "email": "php@ideacat.ro",
-            "homepage": "https://github.com/ideacatlab/laravel-mail-tracker",
-            "role": "Developer"
-        }
-    ],
-    "require": {
-        "php": "^8.1",
-        "illuminate/support": "^10.0",
-        "guzzlehttp/guzzle": "^7.2",
-        "aws/aws-php-sns-message-validator": "^1.8",
-        "aws/aws-sdk-php": "^3.258"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^9.5.10",
-        "orchestra/testbench": "^8.0",
-        "mockery/mockery": "^1.4.4"
-    },
-    "suggest": {
-        "fedeisas/laravel-mail-css-inliner": "Automatically inlines CSS into all outgoing mail."
-    },
     "autoload": {
         "psr-4": {
-            "jdavidbakr\\MailTracker\\": "src"
+            "Ideacatlab\\LaravelMailTracker\\": "src/"
         }
     },
-    "autoload-dev": {
-        "psr-4": {
-            "jdavidbakr\\MailTracker\\Tests\\": "tests"
+    "authors": [
+        {
+            "name": "Razvan Gheorghe"
         }
-    },
-    "scripts": {
-        "test": "phpunit"
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "jdavidbakr\\MailTracker\\MailTrackerServiceProvider"
-            ]
-        }
-    }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
 }
